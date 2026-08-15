@@ -1,0 +1,6 @@
+{
+  "name": "AplusHustler",
+  "description": "Your ultimate platform for side hustles, zero-investment crypto, airdrops, and finance guides.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
