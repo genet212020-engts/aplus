@@ -240,7 +240,7 @@ const About = () => {
               </p>
             </div>
 
-            <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8 max-w-6xl mx-auto">
               {pillars.map((pillar) => {
                 const IconComponent = pillar.icon;
                 return (
@@ -291,7 +291,7 @@ const About = () => {
               </p>
             </div>
 
-            <div className="grid sm:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
               {verificationProcess.map((item) => {
                 const IconComponent = item.icon;
                 return (

@@ -1,32 +1,35 @@
 import { useState, useEffect } from 'react';
-import { Search, X, Zap, Smartphone, FileText, ArrowRight, Sparkles, Star, Gift, ShieldCheck } from 'lucide-react';
+import { Search, X, Zap, Smartphone, FileText, ArrowRight, Sparkles, Star, Gift, ShieldCheck, Globe } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Link } from 'react-router-dom';
-import { blogPosts, BlogPost } from '@/data/blogData';
+import { blogPosts, BlogPost, webTools, WebToolItem } from '@/data/blogData';
 import { airdrops, Airdrop } from '@/data/airdropData';
 import { apps, AppItem } from '@/data/appData';
+import { AppIconBadge } from '@/components/AppIconBadge';
 
 interface SearchModalProps {
   isOpen: boolean;
   onClose: () => void;
 }
 
-const QUICK_TAGS = ['ME PASS', 'mPaisa', 'Monad', 'HiFami', 'Blum', 'Binance', 'Berachain', 'Trust Wallet', 'Airdrop'];
+const QUICK_TAGS = ['ME PASS', 'mPaisa', 'Monad', 'TradingView', 'DeFiLlama', 'HiFami', 'Blum', 'Binance', 'Berachain', 'Dexscreener'];
 
 const SearchModal = ({ isOpen, onClose }: SearchModalProps) => {
   const [query, setQuery] = useState('');
-  const [activeTab, setActiveTab] = useState<'all' | 'apps' | 'articles' | 'airdrops'>('all');
+  const [activeTab, setActiveTab] = useState<'all' | 'apps' | 'articles' | 'tools' | 'airdrops'>('all');
   
   const [appResults, setAppResults] = useState<AppItem[]>([]);
   const [articleResults, setArticleResults] = useState<BlogPost[]>([]);
+  const [toolResults, setToolResults] = useState<WebToolItem[]>([]);
   const [airdropResults, setAirdropResults] = useState<Airdrop[]>([]);
 
   useEffect(() => {
     if (query.trim().length < 2) {
       setAppResults([]);
       setArticleResults([]);
+      setToolResults([]);
       setAirdropResults([]);
       return;
     }
@@ -44,7 +47,7 @@ const SearchModal = ({ isOpen, onClose }: SearchModalProps) => {
     );
     setAppResults(filteredApps);
 
-    // 2. Search Blog Articles
+    // 2. Search Blog Articles & Guides
     const posts = blogPosts.filter(
       post =>
         post.title.toLowerCase().includes(searchTerm) ||
@@ -55,7 +58,17 @@ const SearchModal = ({ isOpen, onClose }: SearchModalProps) => {
     );
     setArticleResults(posts);
 
-    // 3. Search Airdrops
+    // 3. Search Web Tools
+    const tools = webTools.filter(
+      tool =>
+        tool.name.toLowerCase().includes(searchTerm) ||
+        tool.description.toLowerCase().includes(searchTerm) ||
+        tool.category.toLowerCase().includes(searchTerm) ||
+        tool.tags.some(t => t.toLowerCase().includes(searchTerm))
+    );
+    setToolResults(tools);
+
+    // 4. Search Airdrops
     const drops = airdrops.filter(
       drop =>
         drop.name.toLowerCase().includes(searchTerm) ||
@@ -71,6 +84,7 @@ const SearchModal = ({ isOpen, onClose }: SearchModalProps) => {
     setQuery('');
     setAppResults([]);
     setArticleResults([]);
+    setToolResults([]);
     setAirdropResults([]);
     onClose();
   };
@@ -78,9 +92,10 @@ const SearchModal = ({ isOpen, onClose }: SearchModalProps) => {
   const totalResults =
     (activeTab === 'all' || activeTab === 'apps' ? appResults.length : 0) +
     (activeTab === 'all' || activeTab === 'articles' ? articleResults.length : 0) +
+    (activeTab === 'all' || activeTab === 'tools' ? toolResults.length : 0) +
     (activeTab === 'all' || activeTab === 'airdrops' ? airdropResults.length : 0);
 
-  const hasAnyResults = appResults.length > 0 || articleResults.length > 0 || airdropResults.length > 0;
+  const hasAnyResults = appResults.length > 0 || articleResults.length > 0 || toolResults.length > 0 || airdropResults.length > 0;
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
@@ -181,7 +196,20 @@ const SearchModal = ({ isOpen, onClose }: SearchModalProps) => {
                     : 'bg-secondary text-muted-foreground hover:text-foreground'
                 }`}
               >
-                <FileText className="w-3.5 h-3.5" /> Articles ({articleResults.length})
+                <FileText className="w-3.5 h-3.5" /> Guides ({articleResults.length})
+              </button>
+            )}
+
+            {toolResults.length > 0 && (
+              <button
+                onClick={() => setActiveTab('tools')}
+                className={`px-3 py-1.5 rounded-lg transition-all flex items-center gap-1 ${
+                  activeTab === 'tools'
+                    ? 'bg-primary text-primary-foreground font-bold shadow-sm'
+                    : 'bg-secondary text-muted-foreground hover:text-foreground'
+                }`}
+              >
+                <Globe className="w-3.5 h-3.5" /> Web Tools ({toolResults.length})
               </button>
             )}
           </div>
@@ -194,7 +222,7 @@ const SearchModal = ({ isOpen, onClose }: SearchModalProps) => {
               <div className="text-4xl mb-3">🔍</div>
               <p className="text-foreground font-semibold text-sm">Instant Global Search</p>
               <p className="text-muted-foreground text-xs mt-1">
-                Type at least 2 characters to search through verified earning apps, guides & airdrop testnets.
+                Type at least 2 characters to search through verified apps, guides, airdrops & web tools.
               </p>
             </div>
           ) : totalResults === 0 ? (
@@ -202,7 +230,7 @@ const SearchModal = ({ isOpen, onClose }: SearchModalProps) => {
               <div className="text-4xl mb-3">👻</div>
               <p className="text-foreground font-semibold text-sm">No matches found for "{query}"</p>
               <p className="text-muted-foreground text-xs mt-1">
-                Try searching for broader terms like "Wallet", "Telegram", "Monad", or "Airtime".
+                Try searching for terms like "TradingView", "DeFiLlama", "ME PASS", "Monad", or "Airtime".
               </p>
             </div>
           ) : (
@@ -223,9 +251,13 @@ const SearchModal = ({ isOpen, onClose }: SearchModalProps) => {
                       >
                         <div className="flex items-center justify-between gap-3">
                           <div className="flex items-center gap-3">
-                            <span className="text-2xl p-2 rounded-xl bg-muted/60 shrink-0 border border-border/50">
-                              {app.icon}
-                            </span>
+                            <AppIconBadge
+                              icon={app.icon}
+                              name={app.name}
+                              category={app.category}
+                              verified={app.verified}
+                              size="sm"
+                            />
                             <div>
                               <div className="flex items-center gap-2">
                                 <h5 className="font-bold text-foreground text-sm group-hover:text-primary transition-colors">
@@ -261,7 +293,55 @@ const SearchModal = ({ isOpen, onClose }: SearchModalProps) => {
                 </div>
               )}
 
-              {/* 2. Airdrop Results */}
+              {/* 2. Web Tool Results */}
+              {(activeTab === 'all' || activeTab === 'tools') && toolResults.length > 0 && (
+                <div>
+                  <h4 className="text-xs font-bold text-amber-400 uppercase tracking-wider mb-2.5 flex items-center gap-1.5">
+                    <Globe className="w-3.5 h-3.5" /> Curated Web Tools ({toolResults.length})
+                  </h4>
+                  <div className="space-y-2">
+                    {toolResults.map((tool) => (
+                      <a
+                        key={tool.id}
+                        href={tool.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        onClick={handleClose}
+                        className="block p-3.5 rounded-xl bg-card hover:bg-secondary/90 border border-border/80 transition-all hover:border-amber-500/50 shadow-sm group"
+                      >
+                        <div className="flex items-center justify-between gap-3">
+                          <div className="flex items-center gap-3">
+                            <div className="w-9 h-9 rounded-lg bg-background border border-border/80 flex items-center justify-center text-lg shadow-inner">
+                              {tool.icon}
+                            </div>
+                            <div>
+                              <div className="flex items-center gap-2">
+                                <h5 className="font-bold text-foreground text-sm group-hover:text-amber-400 transition-colors">
+                                  {tool.name}
+                                </h5>
+                                <Badge variant="outline" className="text-[10px] px-2 py-0 border-amber-500/30 text-amber-400">
+                                  {tool.category}
+                                </Badge>
+                              </div>
+                              <p className="text-xs text-muted-foreground line-clamp-1 mt-0.5">
+                                {tool.description}
+                              </p>
+                            </div>
+                          </div>
+
+                          <div className="text-right shrink-0">
+                            <span className="text-[11px] font-semibold text-primary flex items-center gap-1">
+                              Launch <ArrowRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
+                            </span>
+                          </div>
+                        </div>
+                      </a>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* 3. Airdrop Results */}
               {(activeTab === 'all' || activeTab === 'airdrops') && airdropResults.length > 0 && (
                 <div>
                   <h4 className="text-xs font-bold text-primary uppercase tracking-wider mb-2.5 flex items-center gap-1.5">
@@ -277,7 +357,13 @@ const SearchModal = ({ isOpen, onClose }: SearchModalProps) => {
                       >
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-2.5">
-                            <span className="text-2xl">{drop.icon}</span>
+                            <AppIconBadge
+                              icon={drop.icon}
+                              name={drop.name}
+                              category={drop.category}
+                              blockchain={drop.blockchain}
+                              size="sm"
+                            />
                             <div>
                               <div className="flex items-center gap-2">
                                 <h5 className="font-bold text-foreground text-sm group-hover:text-primary transition-colors">
@@ -308,7 +394,7 @@ const SearchModal = ({ isOpen, onClose }: SearchModalProps) => {
                 </div>
               )}
 
-              {/* 3. Blog Article Results */}
+              {/* 4. Blog Article Results */}
               {(activeTab === 'all' || activeTab === 'articles') && articleResults.length > 0 && (
                 <div>
                   <h4 className="text-xs font-bold text-sky-400 uppercase tracking-wider mb-2.5 flex items-center gap-1.5">

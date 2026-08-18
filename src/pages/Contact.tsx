@@ -33,7 +33,7 @@ const Contact = () => {
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 gap-12 max-w-5xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 max-w-5xl mx-auto">
             {/* Contact Info */}
             <div>
               <h2 className="font-display text-2xl font-bold text-foreground mb-6">Contact Info</h2>

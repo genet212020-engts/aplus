@@ -33,7 +33,8 @@ import {
   CheckCircle,
   Zap,
   Eye,
-  Share2
+  Share2,
+  Link2
 } from 'lucide-react';
 import { withdrawalProofs as initialProofs, proofCategories, WithdrawalProof } from '@/data/proofData';
 import { toast } from 'sonner';
@@ -104,11 +105,12 @@ const Proof = () => {
         const query = searchQuery.toLowerCase();
         const matchesName = proof.appName.toLowerCase().includes(query);
         const matchesCurr = proof.currency.toLowerCase().includes(query);
-        const matchesUser = proof.userHandle.toLowerCase().includes(query);
+        const matchesUser = (proof.userHandle || '').toLowerCase().includes(query);
+        const matchesRef = (proof.referralCode || '').toLowerCase().includes(query) || (proof.referralLink || '').toLowerCase().includes(query);
         const matchesMethod = proof.payoutMethod.toLowerCase().includes(query);
         const matchesNotes = proof.notes.toLowerCase().includes(query);
 
-        if (!matchesName && !matchesCurr && !matchesUser && !matchesMethod && !matchesNotes) {
+        if (!matchesName && !matchesCurr && !matchesUser && !matchesRef && !matchesMethod && !matchesNotes) {
           return false;
         }
       }
@@ -430,7 +432,7 @@ const Proof = () => {
 
           {filteredProofs.length > 0 ? (
             viewMode === 'grid' ? (
-              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {filteredProofs.map((proof) => {
                   const isUpvoted = !!upvotedIds[proof.id];
                   const currentUpvotes = proof.upvotesCount + (isUpvoted ? 1 : 0);
@@ -505,8 +507,19 @@ const Proof = () => {
                               <span className="font-bold text-emerald-400">{proof.usdEquivalent}</span>
                             </div>
                             <div className="flex justify-between items-center border-t border-border/30 pt-1.5">
-                              <span>Verified User:</span>
-                              <span className="font-mono text-primary font-semibold">{proof.userHandle}</span>
+                              <span className="flex items-center gap-1">
+                                <Link2 className="w-3 h-3 text-primary" /> Referral Link:
+                              </span>
+                              <a
+                                href={proof.referralLink || proof.appUrl || '#'}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                onClick={(e) => e.stopPropagation()}
+                                className="font-mono text-primary font-semibold text-xs hover:underline flex items-center gap-1 truncate max-w-[150px]"
+                              >
+                                <span>{proof.referralCode ? `Code: ${proof.referralCode}` : 'Get Referral Link'}</span>
+                                <ExternalLink className="w-2.5 h-2.5 shrink-0" />
+                              </a>
                             </div>
                           </div>
 
@@ -548,7 +561,7 @@ const Proof = () => {
                       <th className="p-3.5">Payout Amount</th>
                       <th className="p-3.5">USD Value</th>
                       <th className="p-3.5">Payout Method</th>
-                      <th className="p-3.5">User</th>
+                      <th className="p-3.5">Referral Link</th>
                       <th className="p-3.5">Date</th>
                       <th className="p-3.5 text-right">Action</th>
                     </tr>
@@ -581,7 +594,16 @@ const Proof = () => {
                           {proof.payoutMethod}
                         </td>
                         <td className="p-3.5 font-mono text-primary whitespace-nowrap">
-                          {proof.userHandle}
+                          <a
+                            href={proof.referralLink || proof.appUrl || '#'}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            onClick={(e) => e.stopPropagation()}
+                            className="inline-flex items-center gap-1 hover:underline text-xs text-primary font-semibold"
+                          >
+                            <span>{proof.referralCode ? `Code: ${proof.referralCode}` : 'Get Referral Link'}</span>
+                            <ExternalLink className="w-3 h-3 shrink-0" />
+                          </a>
                         </td>
                         <td className="p-3.5 text-muted-foreground font-mono whitespace-nowrap">
                           {proof.date}
@@ -670,8 +692,19 @@ const Proof = () => {
               <DialogTitle className="font-display text-2xl font-bold text-foreground">
                 {selectedProof.appName} Payment Screenshot & Receipt
               </DialogTitle>
-              <DialogDescription className="text-xs text-muted-foreground">
-                Category: {selectedProof.appCategory} • Verified User: {selectedProof.userHandle}
+              <DialogDescription className="text-xs text-muted-foreground flex items-center gap-1.5 flex-wrap">
+                <span>Category: {selectedProof.appCategory}</span>
+                <span>•</span>
+                <span className="font-medium">Referral Link:</span>
+                <a
+                  href={selectedProof.referralLink || selectedProof.appUrl || '#'}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="font-mono text-primary font-semibold hover:underline inline-flex items-center gap-1"
+                >
+                  <span>{selectedProof.referralCode ? `Code: ${selectedProof.referralCode}` : (selectedProof.referralLink ? 'Claim Referral Bonus' : 'Open Link')}</span>
+                  <ExternalLink className="w-3 h-3" />
+                </a>
               </DialogDescription>
             </DialogHeader>
 
@@ -708,6 +741,33 @@ const Proof = () => {
                 <div className="flex justify-between items-center py-1">
                   <span className="text-muted-foreground">Payout Destination:</span>
                   <span className="font-semibold text-foreground">{selectedProof.payoutMethod}</span>
+                </div>
+
+                <div className="flex justify-between items-center py-1 border-t border-border/40">
+                  <span className="text-muted-foreground flex items-center gap-1">
+                    <Link2 className="w-3.5 h-3.5 text-primary" /> Referral Link / Code:
+                  </span>
+                  <div className="flex items-center gap-2">
+                    <a
+                      href={selectedProof.referralLink || selectedProof.appUrl || '#'}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="font-mono text-xs text-primary hover:underline flex items-center gap-1 font-semibold truncate max-w-[220px]"
+                    >
+                      <span>{selectedProof.referralCode ? `Code: ${selectedProof.referralCode}` : (selectedProof.referralLink || selectedProof.appUrl || 'Join Link')}</span>
+                      <ExternalLink className="w-3 h-3 shrink-0" />
+                    </a>
+                    {selectedProof.referralCode && (
+                      <button
+                        type="button"
+                        onClick={() => copyToClipboard(selectedProof.referralCode!, 'Referral Code')}
+                        className="p-1 rounded bg-secondary hover:bg-muted text-foreground transition-colors"
+                        title="Copy Code"
+                      >
+                        <Copy className="w-3 h-3" />
+                      </button>
+                    )}
+                  </div>
                 </div>
 
                 {selectedProof.walletAddress && (
@@ -958,10 +1018,10 @@ const Proof = () => {
 
             <div>
               <label className="text-xs font-medium text-foreground block mb-1">
-                Your Handle (Telegram/X)
+                Referral Link / Invitation Code (Optional)
               </label>
               <Input
-                placeholder="e.g. @yourhandle"
+                placeholder="e.g. https://... or invite code"
                 value={submitUserHandle}
                 onChange={(e) => setSubmitUserHandle(e.target.value)}
                 className="bg-secondary border-border text-xs"

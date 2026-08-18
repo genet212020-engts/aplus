@@ -6,8 +6,11 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Plus, Trash, Sparkles } from 'lucide-react';
+import { Plus, Trash, Sparkles, Image as ImageIcon, CheckCircle2, Star, ShieldCheck, Zap, Upload, Globe, Smile, Type } from 'lucide-react';
 import { toast } from 'sonner';
+import { AppIconBadge } from '@/components/AppIconBadge';
+import { Badge } from '@/components/ui/badge';
+import { POPULAR_APP_LOGOS, EMOJI_CATEGORIES } from '@/components/admin/AppLogoUpdateModal';
 
 export interface EarningAppItem {
   id: string;
@@ -36,6 +39,21 @@ interface EarningAppModalProps {
   onSave: (app: EarningAppItem) => void;
 }
 
+const PRESET_ICONS = [
+  { label: 'Shield & Wallet', icon: '🛡️', cat: 'Wallet' },
+  { label: 'Gaming & Tasks', icon: '🎮', cat: 'Tasks & Micro-Earning' },
+  { label: 'Direct Cash', icon: '💵', cat: 'Tasks & Micro-Earning' },
+  { label: 'Gift & Points', icon: '🎁', cat: 'Tasks & Micro-Earning' },
+  { label: 'DePIN Node', icon: '🌱', cat: 'DePIN & Mining' },
+  { label: 'Telegram Bot', icon: '🤖', cat: 'Telegram Bot' },
+  { label: 'Exchange & Trading', icon: '📈', cat: 'Exchange' },
+  { label: 'Mobile Airtime', icon: '📱', cat: 'Tasks & Micro-Earning' },
+  { label: 'Crypto Diamond', icon: '💎', cat: 'Wallet' },
+  { label: 'Coin / Token', icon: '🪙', cat: 'Exchange' },
+  { label: 'Fast Boost', icon: '⚡', cat: 'Telegram Bot' },
+  { label: 'Fire Hot', icon: '🔥', cat: 'Tasks & Micro-Earning' },
+];
+
 export const EarningAppModal: React.FC<EarningAppModalProps> = ({
   open,
   onOpenChange,
@@ -51,7 +69,7 @@ export const EarningAppModal: React.FC<EarningAppModalProps> = ({
     referralCode: '',
     welcomeBonus: '',
     earningPotential: '💵 $10 - $30 / Week',
-    rating: 4.8,
+    rating: 4.9,
     reviewsCount: '100K+',
     securityScore: 98,
     icon: '💵',
@@ -78,7 +96,7 @@ export const EarningAppModal: React.FC<EarningAppModalProps> = ({
         referralCode: '',
         welcomeBonus: '',
         earningPotential: '💵 $10 - $30 / Week',
-        rating: 4.8,
+        rating: 4.9,
         reviewsCount: '100K+',
         securityScore: 98,
         icon: '💵',
@@ -139,7 +157,7 @@ export const EarningAppModal: React.FC<EarningAppModalProps> = ({
       referralCode: formData.referralCode || '',
       welcomeBonus: formData.welcomeBonus || '',
       earningPotential: formData.earningPotential || '💵 Good Rewards',
-      rating: Number(formData.rating) || 4.8,
+      rating: Number(formData.rating) || 4.9,
       reviewsCount: formData.reviewsCount || '100K+',
       securityScore: Number(formData.securityScore) || 98,
       icon: formData.icon || '💵',
@@ -156,21 +174,67 @@ export const EarningAppModal: React.FC<EarningAppModalProps> = ({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-w-3xl max-h-[92vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2 text-xl font-bold">
+          <DialogTitle className="flex items-center gap-2 text-xl font-bold font-display">
             <Sparkles className="w-5 h-5 text-primary" />
-            {appToEdit ? 'Edit Earning App' : 'Add New Earning App'}
+            {appToEdit ? 'Edit High-Yield Earning App' : 'Add New Earning App'}
           </DialogTitle>
         </DialogHeader>
 
+        {/* Live Preview Card Ribbon */}
+        <div className="p-4 rounded-2xl bg-card border border-border/80 shadow-inner flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="flex items-center gap-3.5 w-full sm:w-auto">
+            <AppIconBadge
+              icon={formData.icon}
+              name={formData.name}
+              category={formData.category}
+              verified={formData.verified}
+              size="lg"
+            />
+            <div className="min-w-0 flex-1">
+              <div className="flex items-center gap-2 flex-wrap">
+                <Badge variant="outline" className="text-xs font-semibold">
+                  {formData.category || 'Category'}
+                </Badge>
+                {formData.featured && (
+                  <span className="bg-primary/20 text-primary text-[10px] font-bold px-2 py-0.5 rounded-full">
+                    Featured
+                  </span>
+                )}
+              </div>
+              <h4 className="font-display font-bold text-base text-foreground truncate mt-1">
+                {formData.name || 'App Name Preview'}
+              </h4>
+              <div className="flex items-center gap-2 text-xs text-muted-foreground mt-0.5">
+                <span className="flex items-center text-amber-400 font-bold">
+                  <Star className="w-3 h-3 fill-amber-400 text-amber-400 mr-0.5" />
+                  {formData.rating || 4.9}
+                </span>
+                <span>•</span>
+                <span>{formData.reviewsCount || '100K+'} users</span>
+                <span>•</span>
+                <span className="text-emerald-400 font-semibold">{formData.securityScore || 98}% Trust</span>
+              </div>
+            </div>
+          </div>
+
+          <div className="shrink-0 text-right w-full sm:w-auto border-t sm:border-t-0 pt-2 sm:pt-0 border-border/50">
+            <span className="text-[11px] text-muted-foreground block">Earning Potential</span>
+            <span className="text-xs font-bold text-emerald-400 bg-emerald-500/10 px-2.5 py-1 rounded-lg border border-emerald-500/20 inline-block mt-0.5">
+              {formData.earningPotential || '💵 High Potential'}
+            </span>
+          </div>
+        </div>
+
         <form onSubmit={handleSubmit} className="space-y-4 pt-2">
+          {/* App Name & Category */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <Label htmlFor="appName" className="text-xs font-semibold">App Name *</Label>
               <Input
                 id="appName"
-                placeholder="e.g. ME PASS, mPaisa, HiFami"
+                placeholder="e.g. ME PASS, mPaisa, HiFami, Jolly Cash"
                 value={formData.name}
                 onChange={e => setFormData({ ...formData, name: e.target.value })}
                 required
@@ -198,6 +262,7 @@ export const EarningAppModal: React.FC<EarningAppModalProps> = ({
             </div>
           </div>
 
+          {/* Links & Referral Code */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <Label htmlFor="downloadUrl" className="text-xs font-semibold">Download / Offer Link *</Label>
@@ -223,6 +288,100 @@ export const EarningAppModal: React.FC<EarningAppModalProps> = ({
             </div>
           </div>
 
+          {/* Icon & Thumbnail Customizer */}
+          <div className="p-4 rounded-2xl bg-secondary/30 border border-border/80 space-y-3">
+            <div className="flex items-center justify-between">
+              <Label htmlFor="iconInput" className="text-xs font-bold text-foreground flex items-center gap-1.5">
+                <ImageIcon className="w-3.5 h-3.5 text-primary" /> App Logo / Icon (Image Upload, Web URL, or Emoji)
+              </Label>
+              <span className="text-[11px] text-muted-foreground">PNG, SVG, JPG, WebP, or Emoji</span>
+            </div>
+
+            {/* Input & Direct File Upload Trigger */}
+            <div className="flex gap-2">
+              <Input
+                id="iconInput"
+                placeholder="e.g. 💵 or https://... or paste image link"
+                value={formData.icon}
+                onChange={e => setFormData({ ...formData, icon: e.target.value })}
+                className="font-mono text-xs"
+              />
+              <label className="cursor-pointer shrink-0">
+                <input
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    if (file) {
+                      if (file.size > 2 * 1024 * 1024) {
+                        toast.error('Image must be under 2MB');
+                        return;
+                      }
+                      const reader = new FileReader();
+                      reader.onload = (ev) => {
+                        const result = ev.target?.result as string;
+                        if (result) {
+                          setFormData({ ...formData, icon: result });
+                          toast.success('Logo uploaded from device!');
+                        }
+                      };
+                      reader.readAsDataURL(file);
+                    }
+                  }}
+                />
+                <Button type="button" variant="outline" size="sm" className="gap-1.5 text-xs h-9 pointer-events-none">
+                  <Upload className="w-3.5 h-3.5" /> Upload File
+                </Button>
+              </label>
+            </div>
+
+            {/* Popular Curated App Logos */}
+            <div>
+              <span className="text-[10px] uppercase font-bold text-muted-foreground block mb-1.5">Popular Curated Logos:</span>
+              <div className="flex flex-wrap items-center gap-1.5">
+                {POPULAR_APP_LOGOS.map(p => (
+                  <button
+                    key={p.name}
+                    type="button"
+                    onClick={() => setFormData({ ...formData, icon: p.icon })}
+                    className={`text-xs px-2.5 py-1 rounded-lg border transition-all flex items-center gap-1.5 ${
+                      formData.icon === p.icon
+                        ? 'bg-primary text-primary-foreground border-primary font-bold shadow-xs'
+                        : 'bg-card border-border/70 hover:border-primary/50 text-foreground'
+                    }`}
+                  >
+                    <img src={p.icon} alt={p.label} className="w-3.5 h-3.5 rounded object-cover" crossOrigin="anonymous" />
+                    <span className="text-[11px]">{p.label}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Presets & Emoji Quick Select */}
+            <div className="pt-1 border-t border-border/50">
+              <span className="text-[10px] uppercase font-bold text-muted-foreground block mb-1.5">Preset Emojis & Symbols:</span>
+              <div className="flex flex-wrap items-center gap-1.5">
+                {PRESET_ICONS.map(p => (
+                  <button
+                    key={p.label}
+                    type="button"
+                    onClick={() => setFormData({ ...formData, icon: p.icon })}
+                    className={`text-xs px-2 py-1 rounded-lg border transition-all flex items-center gap-1 ${
+                      formData.icon === p.icon
+                        ? 'bg-primary text-primary-foreground border-primary font-bold'
+                        : 'bg-card border-border/60 hover:border-primary/50 text-foreground'
+                    }`}
+                  >
+                    <span>{p.icon}</span>
+                    <span className="text-[10px]">{p.label}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Short Description */}
           <div>
             <Label htmlFor="description" className="text-xs font-semibold">Short Summary / Teaser</Label>
             <Textarea
@@ -235,7 +394,8 @@ export const EarningAppModal: React.FC<EarningAppModalProps> = ({
             />
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {/* Bonus, Earning Potential & Scores */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <Label htmlFor="welcomeBonus" className="text-xs font-semibold">Welcome Bonus Tag</Label>
               <Input
@@ -251,20 +411,9 @@ export const EarningAppModal: React.FC<EarningAppModalProps> = ({
               <Label htmlFor="earningPotential" className="text-xs font-semibold">Earning Potential</Label>
               <Input
                 id="earningPotential"
-                placeholder="e.g. $15+/Week"
+                placeholder="e.g. $15+/Week or 1 MEC ≈ $6"
                 value={formData.earningPotential}
                 onChange={e => setFormData({ ...formData, earningPotential: e.target.value })}
-                className="mt-1"
-              />
-            </div>
-
-            <div>
-              <Label htmlFor="icon" className="text-xs font-semibold">App Emoji / Icon</Label>
-              <Input
-                id="icon"
-                placeholder="e.g. 💵, 🎮, 🛡️, ⚽"
-                value={formData.icon}
-                onChange={e => setFormData({ ...formData, icon: e.target.value })}
                 className="mt-1"
               />
             </div>
@@ -286,7 +435,7 @@ export const EarningAppModal: React.FC<EarningAppModalProps> = ({
             </div>
 
             <div>
-              <Label htmlFor="reviewsCount" className="text-xs font-semibold">Reviews Count</Label>
+              <Label htmlFor="reviewsCount" className="text-xs font-semibold">Reviews / User Base</Label>
               <Input
                 id="reviewsCount"
                 placeholder="e.g. 250K+"
@@ -388,7 +537,7 @@ export const EarningAppModal: React.FC<EarningAppModalProps> = ({
                 checked={formData.verified}
                 onCheckedChange={(checked) => setFormData({ ...formData, verified: Boolean(checked) })}
               />
-              <Label htmlFor="verified" className="text-xs cursor-pointer font-medium">Verified & Safe</Label>
+              <Label htmlFor="verified" className="text-xs cursor-pointer font-medium">Verified & Audited</Label>
             </div>
           </div>
 

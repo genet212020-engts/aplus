@@ -22,6 +22,8 @@ import {
   Bookmark
 } from 'lucide-react';
 import { Airdrop } from '@/data/airdropData';
+import { AppIconBadge } from '@/components/AppIconBadge';
+import { SocialShare } from '@/components/SocialShare';
 import { toast } from 'sonner';
 
 interface AirdropDetailModalProps {
@@ -85,9 +87,14 @@ export const AirdropDetailModal: React.FC<AirdropDetailModalProps> = ({
         <DialogHeader className="text-left space-y-4">
           <div className="flex items-start justify-between gap-4 flex-wrap">
             <div className="flex items-center gap-4">
-              <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-muted to-muted/30 border border-border flex items-center justify-center text-4xl shadow-inner shrink-0">
-                {airdrop.icon}
-              </div>
+              <AppIconBadge
+                icon={airdrop.icon}
+                name={airdrop.name}
+                category={airdrop.category}
+                blockchain={airdrop.blockchain}
+                size="xl"
+                interactive={false}
+              />
               <div>
                 <div className="flex items-center gap-2 flex-wrap">
                   <DialogTitle className="font-display text-2xl md:text-3xl font-bold text-foreground">
@@ -124,15 +131,13 @@ export const AirdropDetailModal: React.FC<AirdropDetailModalProps> = ({
                 </Button>
               )}
 
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={copyShareLink}
-                className="gap-1.5 text-muted-foreground hover:text-foreground"
-              >
-                <Share2 className="w-4 h-4" />
-                Share
-              </Button>
+              <SocialShare
+                title={`${airdrop.name} ($${airdrop.ticker}) Airdrop Guide`}
+                description={`Step-by-step strategy for ${airdrop.name} on ${airdrop.blockchain}. Estimated reward: ${airdrop.estimatedReward}`}
+                url={typeof window !== 'undefined' ? `${window.location.origin}/airdrops?id=${airdrop.id}` : `https://aplushustler.com/airdrops?id=${airdrop.id}`}
+                variant="compact"
+                buttonSize="sm"
+              />
             </div>
           </div>
 
@@ -318,6 +323,16 @@ export const AirdropDetailModal: React.FC<AirdropDetailModalProps> = ({
                 );
               })}
             </div>
+          </div>
+
+          {/* Social Share Bar */}
+          <div className="pt-2">
+            <SocialShare
+              title={`${airdrop.name} ($${airdrop.ticker}) Airdrop Strategy & Guide`}
+              description={airdrop.shortDescription}
+              url={typeof window !== 'undefined' ? `${window.location.origin}/airdrops?id=${airdrop.id}` : `https://aplushustler.com/airdrops?id=${airdrop.id}`}
+              variant="bar"
+            />
           </div>
 
           {/* Complete Airdrop Toggle */}

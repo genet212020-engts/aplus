@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ShieldCheck, CheckCircle2, ArrowRight, ExternalLink, Maximize2, Wallet, Copy } from 'lucide-react';
+import { ShieldCheck, CheckCircle2, ArrowRight, ExternalLink, Maximize2, Wallet, Copy, Link2 } from 'lucide-react';
 import { withdrawalProofs, WithdrawalProof } from '@/data/proofData';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -101,8 +101,8 @@ const ProofTicker = ({ className = '' }: ProofTickerProps) => {
                   <h4 className="font-display font-bold text-xs text-foreground truncate group-hover:text-primary transition-colors">
                     {proof.appName}
                   </h4>
-                  <span className="text-[10px] text-primary font-mono font-semibold">
-                    {proof.userHandle}
+                  <span className="text-[10px] text-primary font-mono font-semibold truncate max-w-[100px]">
+                    {proof.referralCode ? `Ref: ${proof.referralCode}` : (proof.userHandle || 'Verified')}
                   </span>
                 </div>
 
@@ -135,8 +135,19 @@ const ProofTicker = ({ className = '' }: ProofTickerProps) => {
               <DialogTitle className="font-display text-2xl font-bold text-foreground">
                 {selectedProof.appName} Payment Screenshot & Receipt
               </DialogTitle>
-              <DialogDescription className="text-xs text-muted-foreground">
-                Category: {selectedProof.appCategory} • Verified User: {selectedProof.userHandle}
+              <DialogDescription className="text-xs text-muted-foreground flex items-center gap-1.5 flex-wrap">
+                <span>Category: {selectedProof.appCategory}</span>
+                <span>•</span>
+                <span className="font-medium">Referral Link:</span>
+                <a
+                  href={selectedProof.referralLink || selectedProof.appUrl || '#'}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="font-mono text-primary font-semibold hover:underline inline-flex items-center gap-1"
+                >
+                  <span>{selectedProof.referralCode ? `Code: ${selectedProof.referralCode}` : (selectedProof.referralLink ? 'Claim Referral Bonus' : 'Open Link')}</span>
+                  <ExternalLink className="w-3 h-3" />
+                </a>
               </DialogDescription>
             </DialogHeader>
 
@@ -173,6 +184,32 @@ const ProofTicker = ({ className = '' }: ProofTickerProps) => {
                 <div className="flex justify-between items-center py-1">
                   <span className="text-muted-foreground">Payout Destination:</span>
                   <span className="font-semibold text-foreground">{selectedProof.payoutMethod}</span>
+                </div>
+
+                <div className="flex justify-between items-center py-1 border-t border-border/40">
+                  <span className="text-muted-foreground flex items-center gap-1">
+                    <Link2 className="w-3.5 h-3.5 text-primary" /> Referral Link / Code:
+                  </span>
+                  <div className="flex items-center gap-2">
+                    <a
+                      href={selectedProof.referralLink || selectedProof.appUrl || '#'}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="font-mono text-xs text-primary hover:underline flex items-center gap-1 font-semibold truncate max-w-[200px]"
+                    >
+                      <span>{selectedProof.referralCode ? `Code: ${selectedProof.referralCode}` : (selectedProof.referralLink || selectedProof.appUrl || 'Join Link')}</span>
+                      <ExternalLink className="w-3 h-3 shrink-0" />
+                    </a>
+                    {selectedProof.referralCode && (
+                      <button
+                        onClick={() => copyToClipboard(selectedProof.referralCode!, 'Referral Code')}
+                        className="p-1 rounded bg-secondary hover:bg-muted text-foreground transition-colors"
+                        title="Copy Code"
+                      >
+                        <Copy className="w-3 h-3" />
+                      </button>
+                    )}
+                  </div>
                 </div>
 
                 {selectedProof.walletAddress && (

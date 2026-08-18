@@ -312,20 +312,12 @@ const BlogPost = () => {
               Back to Journal
             </Link>
 
-            <button
-              onClick={handleCopyLink}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-card border border-border text-xs font-semibold text-muted-foreground hover:text-foreground hover:border-primary/50 transition-all"
-            >
-              {copiedLink ? (
-                <>
-                  <Check className="w-3.5 h-3.5 text-emerald-400" /> Copied
-                </>
-              ) : (
-                <>
-                  <Copy className="w-3.5 h-3.5" /> Share
-                </>
-              )}
-            </button>
+            <SocialShare
+              title={post.title}
+              description={post.excerpt}
+              url={window.location.href}
+              variant="compact"
+            />
           </div>
 
           {/* Article Header */}
@@ -437,15 +429,13 @@ const BlogPost = () => {
           </div>
 
           {/* Social Share & Join Community CTA */}
-          <div className="max-w-3xl mx-auto mt-10 pt-8 border-t border-border">
-            <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-              <SocialShare title={post.title} />
-              <div className="flex items-center gap-3">
-                <Button onClick={handleCopyLink} variant="outline" size="sm" className="gap-1.5 text-xs font-semibold">
-                  <Share2 className="w-4 h-4" /> Copy Share Link
-                </Button>
-              </div>
-            </div>
+          <div className="max-w-3xl mx-auto mt-10 pt-4">
+            <SocialShare
+              title={post.title}
+              description={post.excerpt}
+              url={typeof window !== 'undefined' ? window.location.href : `https://aplushustler.com/blog/${post.slug}`}
+              variant="card"
+            />
           </div>
 
           {/* Related Articles Section */}

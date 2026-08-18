@@ -6,6 +6,8 @@ export interface WithdrawalProof {
   currency: string;
   usdEquivalent: string;
   payoutMethod: string;
+  network?: string;
+  networkIcon?: string;
   txHash?: string;
   explorerUrl?: string;
   walletAddress?: string;
@@ -13,9 +15,12 @@ export interface WithdrawalProof {
   date: string;
   status: 'Verified On-Chain' | 'P2P Receipt Confirmed' | 'Instant Payout';
   trustScore: number; // 0 - 100
-  userHandle: string;
+  userHandle?: string;
+  referralLink?: string;
+  referralCode?: string;
   notes: string;
   earningSteps?: string[];
+  confirmationTime?: string;
   appUrl: string;
   appId?: string;
   featured?: boolean;
@@ -40,6 +45,8 @@ export const withdrawalProofs: WithdrawalProof[] = [
     currency: 'GRASS',
     usdEquivalent: '$1,177.40',
     payoutMethod: 'Solana (Phantom)',
+    network: 'Solana',
+    networkIcon: '🌱',
     txHash: '5K3j9xPq9mLz2aK7vQ1wE4rT6yU8s7d6f5g4h3j2k1m',
     explorerUrl: 'https://solscan.io/tx/5K3j9xPq9mLz2aK7vQ1wE4rT6yU8s7d6f5g4h3j2k1m',
     walletAddress: '7xKX9qW2mLz8pQ1wE4rT6yU8s7d6f5g4',
@@ -48,6 +55,9 @@ export const withdrawalProofs: WithdrawalProof[] = [
     status: 'Verified On-Chain',
     trustScore: 100,
     userHandle: '@cryptohustler_7',
+    referralLink: 'https://app.getgrass.io/register/?referralCode=APLUSHUSTLER',
+    referralCode: 'APLUSHUSTLER',
+    confirmationTime: 'Instant on-chain',
     notes: 'Claimed Season 1 Airdrop payout directly to Phantom wallet on Solana mainnet. Swapped on Raydium DEX for instant SOL.',
     earningSteps: [
       'Connected desktop extension to Wynd DePIN network',
@@ -67,6 +77,8 @@ export const withdrawalProofs: WithdrawalProof[] = [
     currency: 'MEC',
     usdEquivalent: '$36.00',
     payoutMethod: 'Me Pass P2P',
+    network: 'BNB Chain',
+    networkIcon: '🛡️',
     txHash: 'MEC-TX-99812450',
     walletAddress: '0x7a8123bf90c8b7',
     proofImage: 'https://images.unsplash.com/photo-1621416894569-0f39ed31d247?w=1000&q=80',
@@ -74,6 +86,9 @@ export const withdrawalProofs: WithdrawalProof[] = [
     status: 'P2P Receipt Confirmed',
     trustScore: 99,
     userHandle: '@mec_trader',
+    referralLink: 'https://t.me/Aplus_info',
+    referralCode: 'x4ccdp3m',
+    confirmationTime: '3 minutes',
     notes: 'Earned 6 MEC (1 MEC ≈ $6) via daily check-in and KYC ID verification. Sold instantly via built-in P2P trading section.',
     earningSteps: [
       'Signed up using invitation code x4ccdp3m',
@@ -84,6 +99,38 @@ export const withdrawalProofs: WithdrawalProof[] = [
     appId: 'mepass',
     featured: true,
     upvotesCount: 289
+  },
+  {
+    id: 'proof-monad-1',
+    appName: 'Monad Testnet Airdrop',
+    appCategory: 'Airdrop',
+    amount: '1,500.00',
+    currency: 'MONAD',
+    usdEquivalent: '$450.00',
+    payoutMethod: 'Arbitrum / EVM',
+    network: 'Monad Testnet',
+    networkIcon: '🚀',
+    txHash: '0x3c990e1f8872b901a89c2f10d45e99b01c3d',
+    explorerUrl: 'https://explorer.monad.xyz/tx/0x3c990e1f8872b901a89c2f10d45e99b01c3d',
+    walletAddress: '0x88F71a92e10B74d390C8B19027810A1B',
+    proofImage: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=1000&q=80',
+    date: '2025-02-14',
+    status: 'Verified On-Chain',
+    trustScore: 100,
+    userHandle: '@testnet_guru',
+    referralLink: 'https://testnet.monad.xyz',
+    referralCode: 'MONAD-EARLY',
+    confirmationTime: 'Instant',
+    notes: 'Early ecosystem tester reward distribution for completing free zero-gas faucet swaps on Monad devnet.',
+    earningSteps: [
+      'Claimed free testnet MON tokens from public faucet ($0 cost)',
+      'Interacted with 5 ecosystem DEXes weekly to build on-chain volume',
+      'Received early tester allocation confirmation badge'
+    ],
+    appUrl: '/airdrops',
+    appId: 'airdrop-monad',
+    featured: true,
+    upvotesCount: 384
   },
   {
     id: 'proof-blum-1',
@@ -101,6 +148,8 @@ export const withdrawalProofs: WithdrawalProof[] = [
     status: 'Verified On-Chain',
     trustScore: 100,
     userHandle: '@alex_hustles',
+    referralLink: 'https://t.me/blum/app?startapp=ref_aplus',
+    referralCode: 'ref_aplus',
     notes: 'Withdrawal of referral & drop game rewards processed via Telegram TON Space wallet. High trust Binance Labs batch project.',
     earningSteps: [
       'Farmed Blum Points (BP) every 8 hours in Telegram app',
@@ -126,6 +175,8 @@ export const withdrawalProofs: WithdrawalProof[] = [
     status: 'Instant Payout',
     trustScore: 98,
     userHandle: '@ethio_earner',
+    referralLink: 'https://play.google.com/store/apps/details?id=com.mpaisa.app',
+    referralCode: 'MPAISA99',
     notes: 'Completed mobile gaming tasks and received instant Ethio Telecom airtime / USDT payout.',
     earningSteps: [
       'Played daily mobile games inside mPaisa',
@@ -151,6 +202,8 @@ export const withdrawalProofs: WithdrawalProof[] = [
     status: 'Instant Payout',
     trustScore: 99,
     userHandle: '@hifami_boss',
+    referralLink: 'https://hifami.com/invite',
+    referralCode: 'HIFAMI-BONUS',
     notes: 'Cashed out minimum $0.10 threshold instantly + referral rewards ($0.15 per referral).',
     earningSteps: [
       'Signed up and claimed $0.10 welcome reward instantly',
@@ -178,6 +231,8 @@ export const withdrawalProofs: WithdrawalProof[] = [
     status: 'Verified On-Chain',
     trustScore: 100,
     userHandle: '@pro_trader99',
+    referralLink: 'https://partner.bybit.com/b/aplus',
+    referralCode: 'BYBIT_VIP',
     notes: 'Bybit Web3 IDO allocation distribution. Funds transferred directly to Metamask wallet on Arbitrum.',
     earningSteps: [
       'Maintained 300 USDC balance in Bybit Web3 Wallet',
@@ -203,6 +258,8 @@ export const withdrawalProofs: WithdrawalProof[] = [
     status: 'Instant Payout',
     trustScore: 97,
     userHandle: '@jolly_hustler',
+    referralLink: 'https://jollycash.app/ref/1547719',
+    referralCode: '1547719',
     notes: 'Used invite code 1547719 for 6,000 bonus points. Completed video & offerwall tasks for $50 withdrawal.',
     earningSteps: [
       'Entered code 1547719 on registration for 6,000 bonus points',
@@ -228,6 +285,8 @@ export const withdrawalProofs: WithdrawalProof[] = [
     status: 'Instant Payout',
     trustScore: 100,
     userHandle: '@sarah_m',
+    referralLink: 'https://accounts.binance.com/register?ref=APLUS',
+    referralCode: 'APLUS_PRO',
     notes: 'Completed 3 quiz modules in under 10 minutes and received instant reward voucher in Binance Spot account.',
     earningSteps: [
       'Opened Binance Learn & Earn section',
@@ -255,6 +314,8 @@ export const withdrawalProofs: WithdrawalProof[] = [
     status: 'Verified On-Chain',
     trustScore: 98,
     userHandle: '@ton_earner',
+    referralLink: 'https://t.me/catizenbot/gameapp?startapp=r_1002_aplus',
+    referralCode: 'r_1002_aplus',
     notes: 'Airdrop payout from gaming level 35 guild rewards on TON blockchain.',
     earningSteps: [
       'Played Catizen Telegram game to level 35',
@@ -282,6 +343,8 @@ export const withdrawalProofs: WithdrawalProof[] = [
     status: 'Verified On-Chain',
     trustScore: 97,
     userHandle: '@mobile_miner',
+    referralLink: 'https://nodle.com/download',
+    referralCode: 'NODLE-HOT',
     notes: 'Passive bluetooth node walking earnings automatically transferred to zkSync wallet.',
     earningSteps: [
       'Installed Nodle mobile app with bluetooth enabled',
@@ -309,6 +372,8 @@ export const withdrawalProofs: WithdrawalProof[] = [
     status: 'Verified On-Chain',
     trustScore: 96,
     userHandle: '@jumptask_pro',
+    referralLink: 'https://www.jumptask.io/r/APLUS50',
+    referralCode: 'APLUS50',
     notes: 'Watched YouTube videos & completed Google search microtasks. Processed in under 6 hours to Trust Wallet.',
     earningSteps: [
       'Completed micro-tasks on JumpTask dashboard',
@@ -334,6 +399,8 @@ export const withdrawalProofs: WithdrawalProof[] = [
     status: 'Instant Payout',
     trustScore: 95,
     userHandle: '@sports_fan9',
+    referralLink: 'https://buzzerfan.com/register?ref=5390F5',
+    referralCode: '5390F5',
     notes: 'Earned by uploading TikTok-style sports clips and referring friends with code 5390F5.',
     earningSteps: [
       'Uploaded short sports video highlights',

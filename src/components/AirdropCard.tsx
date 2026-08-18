@@ -3,6 +3,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { ExternalLink, CheckCircle2, DollarSign, Zap, ShieldAlert, Award, Clock, ArrowRight, Bookmark } from 'lucide-react';
 import { Airdrop } from '@/data/airdropData';
+import { AppIconBadge } from '@/components/AppIconBadge';
 
 interface AirdropCardProps {
   airdrop: Airdrop;
@@ -59,9 +60,13 @@ export const AirdropCard: React.FC<AirdropCardProps> = ({
         {/* Header row */}
         <div className="flex items-start justify-between gap-3 mb-4">
           <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-muted to-muted/40 border border-border/50 flex items-center justify-center text-2xl shadow-inner shrink-0 group-hover:scale-105 transition-transform duration-300">
-              {airdrop.icon}
-            </div>
+            <AppIconBadge
+              icon={airdrop.icon}
+              name={airdrop.name}
+              category={airdrop.category}
+              blockchain={airdrop.blockchain}
+              size="md"
+            />
             <div>
               <div className="flex items-center gap-2 flex-wrap">
                 <h3 className="font-display font-bold text-lg md:text-xl text-foreground group-hover:text-primary transition-colors">

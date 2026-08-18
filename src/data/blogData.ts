@@ -20,14 +20,299 @@ export interface BlogPost {
   takeaways?: string[];
 }
 
+export interface WebToolItem {
+  id: string;
+  name: string;
+  description: string;
+  category: 'Research' | 'Charts' | 'Trading' | 'DeFi' | 'Analytics' | 'Explorer' | 'Sentiment' | 'Social' | 'News' | 'Portfolio';
+  url: string;
+  featured?: boolean;
+  tags: string[];
+  icon: string;
+  rating?: number;
+  badge?: string;
+}
+
+export const webToolCategories = [
+  'All',
+  'Research',
+  'Charts',
+  'Trading',
+  'DeFi',
+  'Analytics',
+  'Explorer',
+  'Sentiment',
+  'Social',
+  'News',
+  'Portfolio'
+] as const;
+
+export const webTools: WebToolItem[] = [
+  {
+    id: '1',
+    name: 'CoinMarketCap',
+    description: 'Track crypto prices, market capitalization, 24h volume, and liquidity rankings in real-time.',
+    category: 'Research',
+    url: 'https://coinmarketcap.com',
+    featured: true,
+    tags: ['Prices', 'Market Cap', 'Rankings', 'Data'],
+    icon: '📊',
+    rating: 4.9,
+    badge: 'Industry Standard'
+  },
+  {
+    id: '2',
+    name: 'TradingView',
+    description: 'World-class financial charting software and technical analysis platform with custom indicators and script alerts.',
+    category: 'Charts',
+    url: 'https://tradingview.com',
+    featured: true,
+    tags: ['Charts', 'Technical Analysis', 'Indicators', 'Signals'],
+    icon: '📈',
+    rating: 4.9,
+    badge: 'Essential'
+  },
+  {
+    id: '3',
+    name: 'CoinGecko',
+    description: 'Independent crypto data aggregator. Track token metrics, DeFi TVL, NFT floors, and newly listed gem discoveries.',
+    category: 'Research',
+    url: 'https://coingecko.com',
+    featured: true,
+    tags: ['DeFi', 'NFTs', 'Discovery', 'Independent'],
+    icon: '🦎',
+    rating: 4.8,
+    badge: 'Top Pick'
+  },
+  {
+    id: '4',
+    name: 'DeFiLlama',
+    description: 'Largest open-source DeFi analytics aggregator. Track TVL across 200+ blockchains, yields, forks, and airdrops.',
+    category: 'DeFi',
+    url: 'https://defillama.com',
+    featured: true,
+    tags: ['TVL', 'Yields', 'Chains', 'Protocols', 'Airdrops'],
+    icon: '🦙',
+    rating: 4.9,
+    badge: 'DeFi Standard'
+  },
+  {
+    id: '5',
+    name: 'Dexscreener',
+    description: 'Real-time multi-chain DEX charts, pair explorers, liquidity tracking, and instant new token pool scanners.',
+    category: 'Trading',
+    url: 'https://dexscreener.com',
+    featured: true,
+    tags: ['DEX', 'Live Charts', 'Meme Coins', 'Solana', 'Base'],
+    icon: '🔍',
+    rating: 4.9,
+    badge: 'Real-Time'
+  },
+  {
+    id: '6',
+    name: 'Etherscan',
+    description: 'Leading Ethereum blockchain explorer and smart contract verification tool. Track gas fees and whale wallets.',
+    category: 'Explorer',
+    url: 'https://etherscan.io',
+    featured: true,
+    tags: ['Ethereum', 'Transactions', 'Gas Tracker', 'Smart Contracts'],
+    icon: '🔷',
+    rating: 4.9,
+    badge: 'Explorer'
+  },
+  {
+    id: '7',
+    name: 'Crypto Fear & Greed Index',
+    description: 'Multifactorial market sentiment index measuring volatility, momentum, social volume, and surveys.',
+    category: 'Sentiment',
+    url: 'https://alternative.me/crypto/fear-and-greed-index/',
+    featured: true,
+    tags: ['Sentiment', 'Psychology', 'Market Timing', 'Macro'],
+    icon: '😱',
+    rating: 4.8,
+    badge: 'Sentiment'
+  },
+  {
+    id: '8',
+    name: 'Glassnode',
+    description: 'Institutional-grade on-chain market intelligence, miner flow analytics, and exchange reserve tracking.',
+    category: 'Analytics',
+    url: 'https://glassnode.com',
+    tags: ['On-Chain', 'Metrics', 'Whale Tracking', 'Macro Data'],
+    icon: '🔮',
+    rating: 4.7
+  },
+  {
+    id: '9',
+    name: 'Messari',
+    description: 'Professional crypto research reports, protocol governance proposals, and comprehensive fundraising databases.',
+    category: 'Research',
+    url: 'https://messari.io',
+    tags: ['Institutional', 'Reports', 'Governance', 'Fundraising'],
+    icon: '📑',
+    rating: 4.8
+  },
+  {
+    id: '10',
+    name: 'Arkham Intelligence',
+    description: 'Deanonymize and visualize crypto wallet interactions, fund flows, and institutional trading entities.',
+    category: 'Analytics',
+    url: 'https://arkhamintelligence.com',
+    tags: ['Wallet Tracker', 'On-Chain Intel', 'Visualizer'],
+    icon: '🕵️',
+    rating: 4.9,
+    badge: 'Whale Tracker'
+  },
+  {
+    id: '11',
+    name: 'Token Unlocks',
+    description: 'Track token vesting schedules, private investor unlocks, and supply emission impact across top crypto protocols.',
+    category: 'Research',
+    url: 'https://token.unlocks.app',
+    tags: ['Vesting', 'Tokenomics', 'Supply', 'Calendar'],
+    icon: '🔓',
+    rating: 4.8
+  },
+  {
+    id: '12',
+    name: 'DeBank',
+    description: 'Multi-chain DeFi portfolio tracker. Monitor wallet net worth, staking positions, and dApp permissions in one view.',
+    category: 'Portfolio',
+    url: 'https://debank.com',
+    tags: ['Portfolio', 'DeFi Tracker', 'Revoke Permissions'],
+    icon: '💼',
+    rating: 4.9,
+    badge: 'Portfolio'
+  },
+  {
+    id: '13',
+    name: 'DEXTools',
+    description: 'DEX pair explorer with built-in scam detector score, token audits, live pool transactions, and price alerts.',
+    category: 'Trading',
+    url: 'https://dextools.io',
+    tags: ['Audit', 'Live Pairs', 'Scam Detector', 'Trading'],
+    icon: '🛠️',
+    rating: 4.7
+  },
+  {
+    id: '14',
+    name: 'LunarCrush',
+    description: 'Social intelligence platform tracking sentiment and engagement across Twitter, Reddit, and YouTube for 4,000+ coins.',
+    category: 'Social',
+    url: 'https://lunarcrush.com',
+    tags: ['Social Volume', 'Viral Score', 'Influencers'],
+    icon: '🌙',
+    rating: 4.6
+  },
+  {
+    id: '15',
+    name: 'Token Terminal',
+    description: 'Financial accounting data for crypto protocols. Analyze price-to-earnings, active users, and daily revenue.',
+    category: 'Analytics',
+    url: 'https://tokenterminal.com',
+    tags: ['Revenue', 'P/E Ratio', 'Financials', 'Fundamentals'],
+    icon: '💹',
+    rating: 4.8
+  },
+  {
+    id: '16',
+    name: 'CryptoPanic',
+    description: 'High-speed crypto news aggregator. Instant breaking alerts, market updates, and community sentiment votes.',
+    category: 'News',
+    url: 'https://cryptopanic.com',
+    tags: ['Breaking News', 'Live Feeds', 'Aggregator'],
+    icon: '📰',
+    rating: 4.7
+  }
+];
+
 export const categories = [
+  { id: 'all', name: 'All Insights & Tools', icon: '🌟', color: 'primary' },
+  { id: 'guides', name: 'Strategy Guides', icon: '📖', color: 'finance' },
+  { id: 'tools', name: 'Web Tools & Analytics', icon: '🛠️', color: 'crypto' },
   { id: 'crypto', name: 'Crypto & Web3', icon: '🔐', color: 'crypto' },
+  { id: 'airdrops', name: 'Airdrops & Testnets', icon: '🎁', color: 'airdrops' },
   { id: 'finance', name: 'Personal Finance', icon: '💰', color: 'finance' },
   { id: 'investment', name: 'Trading & Yield', icon: '📈', color: 'investment' },
-  { id: 'airdrops', name: 'Airdrops & Testnets', icon: '🎁', color: 'airdrops' },
 ] as const;
 
 export const blogPosts: BlogPost[] = [
+  {
+    id: 'tools-guide',
+    title: 'Top 10 Essential Web Tools & Crypto Scanners Every Trader Needs in 2025',
+    slug: 'top-essential-crypto-web-tools-guide-2025',
+    excerpt: 'A comprehensive walkthrough of the best free web tools for crypto research, on-chain tracking, DEX charts, token unlocks, and whale watching.',
+    content: `## The Modern Crypto Intelligence Stack
+
+Navigating the crypto market in 2025 requires more than just gut feeling. Professional traders and seasoned airdrop hunters leverage a curated toolkit of web analytics, on-chain scanners, and sentiment monitors to gain an unfair advantage.
+
+In this master guide, we break down the top tools you should bookmark right now and how to integrate them into your daily trading and earning routine.
+
+---
+
+### 1. Market Data & Price Discovery: CoinMarketCap & CoinGecko
+
+Before executing any trade or downloading a new earning app:
+* **Check Verified Market Cap & Volume:** Ensure the asset has genuine 24h trading volume across multiple centralized or decentralized exchanges.
+* **Inspect Contract Addresses:** Always copy official contract addresses directly from CoinMarketCap or CoinGecko to avoid malicious duplicate tokens.
+
+---
+
+### 2. Live DEX Charting & Meme Discovery: Dexscreener & DEXTools
+
+When trading on Solana, Base, Ethereum, or BNB Chain:
+* **Dexscreener:** Provides sub-second candlestick charts, liquidity locking status, and live buy/sell transaction streams.
+* **DEXTools:** Features an automated security audit score (0–99) that scans smart contracts for honeypots, mint functions, and excessive buy/sell taxes.
+
+---
+
+### 3. Comprehensive Protocol Analytics: DeFiLlama
+
+DeFiLlama is the undisputed gold standard for decentralized finance metrics:
+* **Track Chain Inflows:** Identify which Layer-1 or Layer-2 ecosystems are attracting institutional capital.
+* **Airdrop Radar:** DeFiLlama maintains a dedicated dashboard tracking protocols that have raised venture capital but have not yet issued a token.
+* **Yield Rankings:** Compare real APYs across stablecoin pools on Aave, Curve, Uniswap, and Morpho.
+
+---
+
+### 4. Smart Contract & On-Chain Explorers: Etherscan & Arkham
+
+* **Etherscan:** Verify transaction confirmations, track gas spikes, and audit approvals.
+* **Arkham Intelligence:** Visualize the exact movements of venture funds (like a16z and Paradigm) and top whale wallets before market-moving events happen.
+
+---
+
+### 5. Vesting & Supply Emissions: Token Unlocks
+
+Never buy a token right before a massive venture capital unlock:
+* Check **Token.unlocks.app** to see unlock countdowns, cliff schedules, and daily emission rates.
+* Large unlocks (exceeding 3% of circulating supply) often trigger short-term downward price volatility.
+
+---
+
+### Conclusion
+
+Bookmark our curated **Web Tools Directory** on this page to quickly access all these tools in one organized hub!`,
+    category: 'tools',
+    thumbnail: 'https://images.unsplash.com/photo-1642790106117-e829e14a795f?w=800&q=80',
+    author: {
+      name: 'A+ Hustler Research Team',
+      role: 'Head of Market Intelligence',
+      avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&q=80',
+      handle: '@aplushustler',
+    },
+    publishedAt: '2025-01-18',
+    readTime: 7,
+    views: 16800,
+    featured: true,
+    tags: ['Web Tools', 'Crypto Scanners', 'DeFiLlama', 'TradingView', 'Etherscan', 'Analytics'],
+    takeaways: [
+      'Use Dexscreener and DEXTools for real-time DEX liquidity and smart contract honeypot audits.',
+      'Monitor DeFiLlama to track capital rotation into emerging blockchain ecosystems.',
+      'Check Token Unlocks before investing to avoid holding through major venture token dilution.',
+      'Arkham Intelligence lets you track smart-money and institutional fund flows.'
+    ]
+  },
   {
     id: '1',
     title: 'How to Start Crypto Trading With NO Initial Capital in 2025',
@@ -102,7 +387,7 @@ Building wealth in crypto without initial capital is completely achievable with 
     readTime: 6,
     views: 14250,
     featured: true,
-    tags: ['Crypto', 'Free Earning', 'Trading', 'Web3', 'Airdrops'],
+    tags: ['Crypto', 'Free Earning', 'Trading', 'Web3', 'Airdrops', 'Guides'],
     takeaways: [
       'KYC verification on wallet apps like ME PASS offers instant token payouts.',
       'Testnets reward early users with free mainnet token allocations.',
@@ -149,7 +434,7 @@ While APYs in DeFi can range from 5% to over 50%, higher yields come with specif
 2. **Acquire Stablecoins:** Convert fiat to USDC or USDT to minimize asset volatility while earning yield.
 3. **Choose Audited Blue-Chip Protocols:** Stick to battle-tested protocols with high Total Value Locked (TVL) such as Aave, Uniswap, or Curve Finance.
 4. **Monitor and Rebalance:** Regularly track pool APYs and compound your yield rewards weekly.`,
-    category: 'crypto',
+    category: 'guides',
     thumbnail: 'https://images.unsplash.com/photo-1642790106117-e829e14a795f?w=800&q=80',
     author: {
       name: 'Michael Chen',
@@ -161,7 +446,7 @@ While APYs in DeFi can range from 5% to over 50%, higher yields come with specif
     readTime: 8,
     views: 9810,
     featured: true,
-    tags: ['DeFi', 'Yield Farming', 'Staking', 'Passive Income', 'Smart Contracts'],
+    tags: ['DeFi', 'Yield Farming', 'Staking', 'Passive Income', 'Smart Contracts', 'Guides'],
     takeaways: [
       'DeFi eliminates traditional banking middlemen via automated smart contracts.',
       'Stablecoin lending on protocols like Aave provides predictable low-volatility yield.',
@@ -262,7 +547,7 @@ Never store your emergency fund in volatile stocks or locked real estate. Keep i
     publishedAt: '2025-01-08',
     readTime: 5,
     views: 8900,
-    tags: ['Emergency Fund', 'Savings', 'HYSA', 'Financial Safety'],
+    tags: ['Emergency Fund', 'Savings', 'HYSA', 'Financial Safety', 'Guides'],
     takeaways: [
       'Store 3–6 months of essential expenses in liquid, low-risk accounts.',
       'High-Yield Savings Accounts offer FDIC-backed capital preservation with yield.',
@@ -307,7 +592,7 @@ Both Index Mutual Funds and Exchange-Traded Funds (ETFs) allow investors to inst
     readTime: 9,
     views: 12400,
     featured: true,
-    tags: ['ETFs', 'Index Funds', 'Investing', 'Stock Market', 'S&P 500'],
+    tags: ['ETFs', 'Index Funds', 'Investing', 'Stock Market', 'S&P 500', 'Guides'],
     takeaways: [
       'ETFs trade live throughout market hours; index funds price once at market close.',
       'ETFs generally offer superior tax efficiency for taxable brokerage accounts.',
@@ -343,7 +628,7 @@ Dollar-Cost Averaging (DCA) solves this by investing a fixed dollar amount into 
     publishedAt: '2025-01-03',
     readTime: 6,
     views: 11100,
-    tags: ['DCA', 'Investing', 'Crypto Trading', 'Risk Management'],
+    tags: ['DCA', 'Investing', 'Crypto Trading', 'Risk Management', 'Guides'],
     takeaways: [
       'DCA invests a fixed amount at scheduled intervals regardless of price.',
       'Automatically accumulates more shares during market pullbacks.',
@@ -356,4 +641,3 @@ export const getFeaturedPosts = () => (blogPosts || []).filter(post => post?.fea
 export const getPostsByCategory = (category: string = 'all') => 
   (!category || category === 'all') ? (blogPosts || []) : (blogPosts || []).filter(post => post?.category === category);
 export const getPostBySlug = (slug: string) => (blogPosts || []).find(post => post?.slug === slug);
-

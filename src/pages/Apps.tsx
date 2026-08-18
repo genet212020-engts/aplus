@@ -1,4 +1,5 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
@@ -26,10 +27,16 @@ import {
   Info,
   Sparkles,
   Flame,
-  Copy
+  Copy,
+  Globe,
+  Link2
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { apps as initialApps, AppItem as App } from '@/data/appData';
+import { AppIconBadge } from '@/components/AppIconBadge';
+import { IconBadge } from '@/components/IconBadge';
+import { SocialShare } from '@/components/SocialShare';
+import { AppCard, getAppCategoryColor } from '@/components/AppCard';
 
 const getCategoryColor = (category: string) => {
   switch (category) {
@@ -52,12 +59,54 @@ const Apps = () => {
     }
   });
 
-  const [searchQuery, setSearchQuery] = useState('');
-  const [categoryFilter, setCategoryFilter] = useState('all');
+  const [searchParams] = useSearchParams();
+  const [searchQuery, setSearchQuery] = useState(() => searchParams.get('search') || searchParams.get('q') || '');
+  const [categoryFilter, setCategoryFilter] = useState(() => searchParams.get('category') || 'all');
   const [sortBy, setSortBy] = useState<'rating' | 'featured' | 'security'>('featured');
   const [selectedApp, setSelectedApp] = useState<App | null>(null);
   const [qrApp, setQrApp] = useState<App | null>(null);
   const [isSubmitOpen, setIsSubmitOpen] = useState(false);
+  const [bookmarkedAppIds, setBookmarkedAppIds] = useState<string[]>(() => {
+    try {
+      const saved = localStorage.getItem('bookmarked_earning_apps');
+      return saved ? JSON.parse(saved) : [];
+    } catch {
+      return [];
+    }
+  });
+
+  const toggleBookmark = (id: string, e?: React.MouseEvent) => {
+    if (e) e.stopPropagation();
+    setBookmarkedAppIds((prev) => {
+      const updated = prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id];
+      try {
+        localStorage.setItem('bookmarked_earning_apps', JSON.stringify(updated));
+      } catch {}
+      const isNowBookmarked = updated.includes(id);
+      toast.success(isNowBookmarked ? '⭐ App saved to your Bookmarks!' : 'Removed from Bookmarks');
+      return updated;
+    });
+  };
+
+  useEffect(() => {
+    const q = searchParams.get('search') || searchParams.get('q');
+    if (q !== null) {
+      setSearchQuery(q);
+    }
+    const cat = searchParams.get('category');
+    if (cat !== null) {
+      setCategoryFilter(cat);
+    }
+    const appId = searchParams.get('app') || searchParams.get('id');
+    if (appId) {
+      const found = appList.find(
+        (a) => a.id === appId || a.name.toLowerCase().replace(/\s+/g, '-') === appId.toLowerCase()
+      );
+      if (found) {
+        setSelectedApp(found);
+      }
+    }
+  }, [searchParams, appList]);
 
   // Submit form state
   const [newAppName, setNewAppName] = useState('');
@@ -73,7 +122,9 @@ const Apps = () => {
   const filteredApps = useMemo(() => {
     let filtered = appList;
 
-    if (categoryFilter !== 'all') {
+    if (categoryFilter === 'bookmarks') {
+      filtered = filtered.filter(app => bookmarkedAppIds.includes(app.id));
+    } else if (categoryFilter !== 'all') {
       filtered = filtered.filter(app => app.category === categoryFilter);
     }
 
@@ -94,7 +145,7 @@ const Apps = () => {
       // Featured first
       return (b.featured ? 1 : 0) - (a.featured ? 1 : 0);
     });
-  }, [searchQuery, categoryFilter, sortBy]);
+  }, [appList, searchQuery, categoryFilter, sortBy, bookmarkedAppIds]);
 
   const featuredApps = filteredApps.filter(a => a.featured);
   const otherApps = filteredApps.filter(a => !a.featured);
@@ -254,6 +305,11 @@ const Apps = () => {
                     <TabsTrigger value="Tasks & Micro-Earning" className="rounded-lg px-4 text-xs sm:text-sm">
                       Tasks & Earning 💵
                     </TabsTrigger>
+                    {bookmarkedAppIds.length > 0 && (
+                      <TabsTrigger value="bookmarks" className="rounded-lg px-4 text-xs sm:text-sm text-amber-400 font-bold">
+                        ⭐ Saved ({bookmarkedAppIds.length})
+                      </TabsTrigger>
+                    )}
                   </TabsList>
                 </Tabs>
 
@@ -297,142 +353,17 @@ const Apps = () => {
               </span>
             </div>
 
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {featuredApps.map((app, index) => (
-                <div
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {featuredApps.map((app) => (
+                <AppCard
                   key={app.id}
-                  className={`group relative animate-fade-up stagger-${index + 1}`}
-                >
-                  <div className="absolute -inset-0.5 bg-gradient-to-r from-primary/40 to-primary/20 rounded-2xl opacity-0 group-hover:opacity-100 blur-lg transition-all duration-500" />
-
-                  <div className="relative h-full rounded-2xl surface-card hover-lift p-6 border border-border/80 flex flex-col justify-between">
-                    <div>
-                      {/* Top Badges */}
-                      <div className="flex items-center justify-between mb-4">
-                        <Badge variant="outline" className={`${getCategoryColor(app.category)} font-semibold text-xs`}>
-                          {app.category}
-                        </Badge>
-
-                        <div className="flex items-center gap-2">
-                          {app.earningPotential && (
-                            <span className="text-[11px] font-bold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20">
-                              {app.earningPotential}
-                            </span>
-                          )}
-                          <div className="bg-primary text-primary-foreground text-[11px] font-extrabold px-2.5 py-0.5 rounded-full shadow-md">
-                            Featured
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Header */}
-                      <div className="flex items-start gap-4 mb-4">
-                        <div
-                          onClick={() => setSelectedApp(app)}
-                          className="w-16 h-16 rounded-2xl bg-gradient-to-br from-card to-muted flex items-center justify-center text-4xl shadow-inner cursor-pointer hover:scale-105 transition-transform shrink-0 border border-border"
-                        >
-                          {app.icon}
-                        </div>
-                        <div>
-                          <h3
-                            onClick={() => setSelectedApp(app)}
-                            className="font-display text-xl font-bold text-foreground group-hover:text-primary transition-colors cursor-pointer flex items-center gap-1.5"
-                          >
-                            {app.name}
-                            {app.verified && <ShieldCheck className="w-4 h-4 text-emerald-400 inline" />}
-                          </h3>
-
-                          <div className="flex items-center gap-2 mt-1 text-xs text-muted-foreground">
-                            <span className="flex items-center text-amber-400 font-bold">
-                              <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400 mr-1" />
-                              {app.rating}
-                            </span>
-                            <span>•</span>
-                            <span>{app.reviewsCount} downloads</span>
-                            <span>•</span>
-                            <span className="text-emerald-400 font-semibold">{app.securityScore}% Audit</span>
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Description */}
-                      <p className="text-muted-foreground text-sm leading-relaxed mb-4">
-                        {app.description}
-                      </p>
-
-                      {/* Welcome Bonus Notice */}
-                      {app.welcomeBonus && (
-                        <div className="mb-3 p-2.5 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center gap-2 text-xs text-amber-300 font-medium">
-                          <Gift className="w-4 h-4 shrink-0 text-amber-400" />
-                          <span>{app.welcomeBonus}</span>
-                        </div>
-                      )}
-
-                      {/* Referral Code Box */}
-                      {app.referralCode && (
-                        <div className="mb-4">
-                          <ReferralCodeBox
-                            code={app.referralCode}
-                            appName={app.name}
-                            label="Referral Code"
-                          />
-                        </div>
-                      )}
-
-                      {/* Tags */}
-                      <div className="flex flex-wrap gap-1.5 mb-6">
-                        {(app.tags || []).map((tag) => (
-                          <span
-                            key={tag}
-                            className="text-[11px] px-2.5 py-0.5 rounded-full bg-muted/60 text-muted-foreground border border-border/40 font-mono"
-                          >
-                            #{tag}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-
-                    {/* Actions */}
-                    <div className="space-y-2 pt-2 border-t border-border/40">
-                      <div className="grid grid-cols-2 gap-2">
-                        {app.telegramUrl ? (
-                          <a href={app.telegramUrl} target="_blank" rel="noopener noreferrer" className="col-span-2">
-                            <Button className="w-full gap-2 bg-sky-500 hover:bg-sky-600 text-white font-semibold shadow-md">
-                              <Send className="w-4 h-4" /> Open Telegram App
-                            </Button>
-                          </a>
-                        ) : (
-                          <>
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              onClick={() => setQrApp(app)}
-                              className="gap-1.5 text-xs hover:bg-muted/50"
-                            >
-                              <QrCode className="w-3.5 h-3.5 text-primary" /> Scan QR
-                            </Button>
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              onClick={() => setSelectedApp(app)}
-                              className="gap-1.5 text-xs hover:bg-muted/50"
-                            >
-                              <Info className="w-3.5 h-3.5 text-primary" /> Details
-                            </Button>
-                          </>
-                        )}
-                      </div>
-
-                      {!app.telegramUrl && (
-                        <a href={app.downloadUrl} target="_blank" rel="noopener noreferrer" className="block">
-                          <Button className="w-full gap-2 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold shadow-md">
-                            <Download className="w-4 h-4" /> Download App
-                          </Button>
-                        </a>
-                      )}
-                    </div>
-                  </div>
-                </div>
+                  app={app}
+                  variant="featured"
+                  onSelect={setSelectedApp}
+                  onOpenQr={setQrApp}
+                  isBookmarked={bookmarkedAppIds.includes(app.id)}
+                  onToggleBookmark={toggleBookmark}
+                />
               ))}
             </div>
           </section>
@@ -448,78 +379,17 @@ const Apps = () => {
               <h2 className="font-display text-2xl font-bold text-foreground">More Verified Apps & Bots</h2>
             </div>
 
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
               {otherApps.map((app) => (
-                <div
+                <AppCard
                   key={app.id}
-                  className="group rounded-2xl surface-card hover-lift p-5 border border-border/80 flex flex-col justify-between"
-                >
-                  <div>
-                    {/* Header */}
-                    <div className="flex items-center justify-between gap-2 mb-3">
-                      <div className="flex items-center gap-3">
-                        <div
-                          onClick={() => setSelectedApp(app)}
-                          className="w-12 h-12 rounded-xl bg-muted/60 flex items-center justify-center text-3xl cursor-pointer hover:scale-105 transition-transform border border-border/60"
-                        >
-                          {app.icon}
-                        </div>
-                        <div>
-                          <h3
-                            onClick={() => setSelectedApp(app)}
-                            className="font-display font-bold text-foreground group-hover:text-primary transition-colors cursor-pointer text-base"
-                          >
-                            {app.name}
-                          </h3>
-                          <Badge variant="outline" className={`text-[10px] px-2 py-0 ${getCategoryColor(app.category)}`}>
-                            {app.category}
-                          </Badge>
-                        </div>
-                      </div>
-
-                      <div className="text-right">
-                        <span className="flex items-center text-amber-400 font-bold text-xs">
-                          <Star className="w-3 h-3 fill-amber-400 text-amber-400 mr-0.5" />
-                          {app.rating}
-                        </span>
-                        <span className="text-[10px] text-muted-foreground block">{app.reviewsCount}</span>
-                      </div>
-                    </div>
-
-                    {/* Description */}
-                    <p className="text-xs text-muted-foreground leading-relaxed mb-4 line-clamp-2">
-                      {app.description}
-                    </p>
-
-                    {/* Highlights */}
-                    <ul className="space-y-1 mb-4 text-[11px] text-muted-foreground">
-                      {(app.highlights || []).slice(0, 2).map((item, i) => (
-                        <li key={i} className="flex items-center gap-1.5 truncate">
-                          <CheckCircle2 className="w-3 h-3 text-emerald-400 shrink-0" />
-                          <span>{item}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-
-                  {/* Actions */}
-                  <div className="flex items-center gap-2 pt-3 border-t border-border/40">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => setSelectedApp(app)}
-                      className="text-xs px-2.5 hover:bg-muted"
-                    >
-                      Info
-                    </Button>
-                    <a href={app.telegramUrl || app.downloadUrl} target="_blank" rel="noopener noreferrer" className="flex-1">
-                      <Button size="sm" className="w-full gap-1.5 text-xs bg-primary text-primary-foreground font-semibold">
-                        {app.telegramUrl ? <Send className="w-3.5 h-3.5" /> : <ExternalLink className="w-3.5 h-3.5" />}
-                        {app.telegramUrl ? 'Open Bot' : 'Get App'}
-                      </Button>
-                    </a>
-                  </div>
-                </div>
+                  app={app}
+                  variant="standard"
+                  onSelect={setSelectedApp}
+                  onOpenQr={setQrApp}
+                  isBookmarked={bookmarkedAppIds.includes(app.id)}
+                  onToggleBookmark={toggleBookmark}
+                />
               ))}
             </div>
           </section>
@@ -543,19 +413,33 @@ const Apps = () => {
         <Dialog open={!!selectedApp} onOpenChange={() => setSelectedApp(null)}>
           <DialogContent className="max-w-lg bg-card border-border p-6 rounded-2xl max-h-[90vh] overflow-y-auto">
             <DialogHeader className="space-y-3 text-left">
-              <div className="flex items-center justify-between">
+              <div className="flex items-center justify-between gap-2 flex-wrap">
                 <Badge variant="outline" className={`${getCategoryColor(selectedApp.category)} font-semibold text-xs`}>
                   {selectedApp.category}
                 </Badge>
-                <div className="flex items-center gap-1 text-xs text-emerald-400 font-semibold bg-emerald-500/10 px-2.5 py-1 rounded-full border border-emerald-500/20">
-                  <ShieldCheck className="w-3.5 h-3.5" /> Security Score: {selectedApp.securityScore}/100
+                <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-1 text-xs text-emerald-400 font-semibold bg-emerald-500/10 px-2.5 py-1 rounded-full border border-emerald-500/20">
+                    <ShieldCheck className="w-3.5 h-3.5" /> Security: {selectedApp.securityScore}/100
+                  </div>
+                  <SocialShare
+                    title={`${selectedApp.name} - Verified Earning App Guide`}
+                    description={`Check out ${selectedApp.name} on A+ Hustler: ${selectedApp.description}`}
+                    url={typeof window !== 'undefined' ? `${window.location.origin}/apps?app=${selectedApp.id}` : `https://aplushustler.com/apps?app=${selectedApp.id}`}
+                    variant="compact"
+                    buttonSize="sm"
+                  />
                 </div>
               </div>
 
               <div className="flex items-center gap-4">
-                <div className="w-16 h-16 rounded-2xl bg-muted/60 flex items-center justify-center text-4xl border border-border">
-                  {selectedApp.icon}
-                </div>
+                <AppIconBadge
+                  icon={selectedApp.icon}
+                  name={selectedApp.name}
+                  category={selectedApp.category}
+                  verified={selectedApp.verified}
+                  size="xl"
+                  interactive={false}
+                />
                 <div>
                   <DialogTitle className="font-display text-2xl font-bold text-foreground">
                     {selectedApp.name}
@@ -627,32 +511,73 @@ const Apps = () => {
                 </div>
               </div>
 
-              {/* Store Options */}
+              {/* Social Share Bar */}
+              <div className="pt-2">
+                <SocialShare
+                  title={`Check out ${selectedApp.name} on A+ Hustler!`}
+                  description={selectedApp.description}
+                  url={typeof window !== 'undefined' ? `${window.location.origin}/apps?app=${selectedApp.id}` : `https://aplushustler.com/apps?app=${selectedApp.id}`}
+                  variant="bar"
+                />
+              </div>
+
+              {/* Store & Official Website Options */}
               <div className="pt-2 space-y-2">
-                <h4 className="text-xs font-semibold text-foreground uppercase tracking-wider mb-1">
-                  Official Installation Links
-                </h4>
-                <div className="grid grid-cols-2 gap-2">
-                  {selectedApp.playStoreUrl && (
-                    <a href={selectedApp.playStoreUrl} target="_blank" rel="noopener noreferrer">
-                      <Button variant="outline" size="sm" className="w-full gap-2 text-xs">
-                        <Play className="w-3.5 h-3.5" /> Google Play
+                <div className="flex items-center justify-between">
+                  <h4 className="text-xs font-semibold text-foreground uppercase tracking-wider">
+                    Official App & Verification Links
+                  </h4>
+                  <span className="text-[10px] text-emerald-400 font-semibold bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">
+                    Verified Sources
+                  </span>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                  {selectedApp.officialWebsiteUrl && (
+                    <a href={selectedApp.officialWebsiteUrl} target="_blank" rel="noopener noreferrer">
+                      <Button variant="outline" size="sm" className="w-full gap-2 text-xs justify-start h-9 hover:bg-primary/10 hover:border-primary/40 hover:text-primary">
+                        <Globe className="w-3.5 h-3.5 text-primary shrink-0" />
+                        <span className="truncate">Official Website</span>
+                        <ExternalLink className="w-3 h-3 ml-auto opacity-60" />
                       </Button>
                     </a>
                   )}
+
+                  {selectedApp.playStoreUrl && (
+                    <a href={selectedApp.playStoreUrl} target="_blank" rel="noopener noreferrer">
+                      <Button variant="outline" size="sm" className="w-full gap-2 text-xs justify-start h-9 hover:bg-emerald-500/10 hover:border-emerald-500/40 hover:text-emerald-400">
+                        <Play className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                        <span className="truncate">Google Play Store</span>
+                        <ExternalLink className="w-3 h-3 ml-auto opacity-60" />
+                      </Button>
+                    </a>
+                  )}
+
                   {selectedApp.appStoreUrl && (
                     <a href={selectedApp.appStoreUrl} target="_blank" rel="noopener noreferrer">
-                      <Button variant="outline" size="sm" className="w-full gap-2 text-xs">
-                        <Apple className="w-3.5 h-3.5" /> Apple App Store
+                      <Button variant="outline" size="sm" className="w-full gap-2 text-xs justify-start h-9 hover:bg-sky-500/10 hover:border-sky-500/40 hover:text-sky-400">
+                        <Apple className="w-3.5 h-3.5 text-sky-400 shrink-0" />
+                        <span className="truncate">Apple App Store</span>
+                        <ExternalLink className="w-3 h-3 ml-auto opacity-60" />
+                      </Button>
+                    </a>
+                  )}
+
+                  {selectedApp.telegramUrl && (
+                    <a href={selectedApp.telegramUrl} target="_blank" rel="noopener noreferrer">
+                      <Button variant="outline" size="sm" className="w-full gap-2 text-xs justify-start h-9 hover:bg-sky-500/10 hover:border-sky-500/40 hover:text-sky-400">
+                        <Send className="w-3.5 h-3.5 text-sky-400 shrink-0" />
+                        <span className="truncate">Official Telegram</span>
+                        <ExternalLink className="w-3 h-3 ml-auto opacity-60" />
                       </Button>
                     </a>
                   )}
                 </div>
 
                 <a href={selectedApp.telegramUrl || selectedApp.downloadUrl} target="_blank" rel="noopener noreferrer" className="block pt-2">
-                  <Button className="w-full gap-2 bg-primary text-primary-foreground font-semibold shadow-md">
+                  <Button className="w-full gap-2 bg-primary text-primary-foreground font-bold shadow-md h-10">
                     {selectedApp.telegramUrl ? <Send className="w-4 h-4" /> : <Download className="w-4 h-4" />}
-                    {selectedApp.telegramUrl ? 'Launch Telegram Mini-App' : 'Download Official App'}
+                    {selectedApp.telegramUrl ? 'Launch Telegram Mini-App' : 'Download & Claim Welcome Bonus'}
                   </Button>
                 </a>
               </div>

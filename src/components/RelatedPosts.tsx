@@ -47,7 +47,7 @@ const RelatedPosts = ({ currentPostId, categoryId }: RelatedPostsProps) => {
       <h2 className="font-display text-2xl font-bold text-foreground mb-6">
         Related <span className="text-gradient-gold">Articles</span>
       </h2>
-      <div className="grid md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {posts.map((post) => (
           <Link
             key={post.id}

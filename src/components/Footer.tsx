@@ -157,7 +157,7 @@ const Footer = () => {
         </div>
 
         {/* Standard Footer Columns */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
           {/* Brand & Mission */}
           <div className="md:col-span-1">
             <Link to="/" className="flex items-center gap-2.5 mb-4 group">
@@ -259,7 +259,12 @@ const Footer = () => {
               </li>
               <li>
                 <Link to="/blog" className="text-primary-foreground/80 hover:text-primary-foreground transition-colors">
-                  📖 Blog & Strategy Guides
+                  📖 Master Guides & Blog
+                </Link>
+              </li>
+              <li>
+                <Link to="/blog?tab=tools" className="text-primary-foreground/80 hover:text-primary-foreground transition-colors">
+                  🛠️ Curated Web Tools
                 </Link>
               </li>
               <li>

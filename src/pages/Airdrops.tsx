@@ -37,14 +37,26 @@ const Airdrops = () => {
   });
 
   const [searchParams, setSearchParams] = useSearchParams();
-  const [searchQuery, setSearchQuery] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState<string>('all');
+  const [searchQuery, setSearchQuery] = useState(() => searchParams.get('search') || searchParams.get('q') || '');
+  const [selectedCategory, setSelectedCategory] = useState<string>(() => searchParams.get('category') || 'all');
   const [selectedStatus, setSelectedStatus] = useState<string>('all');
   const [selectedDifficulty, setSelectedDifficulty] = useState<string>('all');
   const [tabView, setTabView] = useState<'all' | 'saved' | 'completed'>('all');
 
   const [selectedAirdrop, setSelectedAirdrop] = useState<Airdrop | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  // Handle search parameter updates
+  useEffect(() => {
+    const q = searchParams.get('search') || searchParams.get('q');
+    if (q !== null) {
+      setSearchQuery(q);
+    }
+    const cat = searchParams.get('category');
+    if (cat !== null) {
+      setSelectedCategory(cat);
+    }
+  }, [searchParams]);
 
   // Local storage bookmarks & completed
   const [bookmarks, setBookmarks] = useState<string[]>(() => {
@@ -401,7 +413,7 @@ const Airdrops = () => {
         {/* Results Grid */}
         <section className="container mx-auto px-4 py-8 pb-20">
           {filteredAirdrops.length > 0 ? (
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {filteredAirdrops.map((airdrop) => (
                 <AirdropCard
                   key={airdrop.id}
